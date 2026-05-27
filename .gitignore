@@ -1,0 +1,34 @@
+# Python
+*.py[cod]
+__pycache__/
+*.pyo
+*.pyd
+*.pycache/
+
+# Virtualenv / env files
+venv/
+.env
+.env.*
+
+# IDE / OS
+.vscode/
+.DS_Store
+*.swp
+
+# Data (ignore large image folders, keep metadata)
+data/images/
+data/TEST/
+data/TRAIN/
+# keep labels file
+!data/labels.csv
+
+# Logs and build artifacts
+*.log
+build/
+dist/
+
+# Node (if present)
+node_modules/
+
+# Keep an example or README in repo
+!README.md
