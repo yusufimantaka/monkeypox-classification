@@ -36,43 +36,50 @@
 
 \begin{frame}
     \frametitle{Background}
+    \footnotesize
     
     \begin{columns}[T]
-        \begin{column}{0.55\textwidth}
+        \begin{column}{0.52\textwidth}
             \textbf{Monkeypox (MPX)} is a zoonotic disease caused by the Monkeypox virus.
             \begin{itemize}
-                \item Historically endemic to Central and West Africa
+                \footnotesize
+                \setlength{\itemsep}{2pt}
+                \item Endemic to Central and West Africa
                 \item 2022--2023 global outbreak highlighted urgent need for rapid diagnostics
-                \item Visual inspection of skin lesions is the primary diagnostic method
-                \item Easily confused with chickenpox, measles, and other skin rashes
+                \item Visual inspection is the primary diagnostic method
+                \item Easily confused with chickenpox, measles, and other rashes
             \end{itemize}
-            \vspace{0.5em}
-            \alert{Challenge:} Automated classification is needed for timely diagnosis and containment.
+            \vspace{0.3em}
+            \alert{Challenge:} Automated classification needed for timely diagnosis.
         \end{column}
         
-        \begin{column}{0.4\textwidth}
+        \begin{column}{0.42\textwidth}
             \includegraphics[width=\textwidth]{sample_images.png}
-            \centerline{\small Sample skin lesion images}
+            \centerline{\footnotesize Sample skin lesion images}
         \end{column}
     \end{columns}
 \end{frame}
 
 \begin{frame}
     \frametitle{Problem Statement \& Objectives}
+    \footnotesize
     
-    \begin{block}{Problem Statement}
+    \begin{block}{\footnotesize Problem Statement}
+        \footnotesize
         Skin lesions from Monkeypox are visually similar to other conditions, making manual diagnosis error-prone and time-consuming.
     \end{block}
     
-    \vspace{0.5em}
+    \vspace{0.3em}
     
-    \begin{exampleblock}{Research Objectives}
+    \begin{exampleblock}{\footnotesize Research Objectives}
+        \footnotesize
         \begin{enumerate}
-            \item Implement robust lesion segmentation from skin background
-            \item Extract rich handcrafted features (color, texture, shape, edges, frequency)
-            \item Leverage transfer-learned CNN embeddings (ResNet18)
-            \item Compare handcrafted, CNN, and hybrid feature representations
-            \item Evaluate four classifiers for binary MPX vs. non-MPX classification
+            \setlength{\itemsep}{1pt}
+            \item Robust lesion segmentation from skin background
+            \item Handcrafted features (color, texture, shape, edges, frequency)
+            \item Transfer-learned CNN embeddings (ResNet18)
+            \item Compare handcrafted, CNN, and hybrid representations
+            \item Evaluate classifiers for binary MPX vs. non-MPX
         \end{enumerate}
     \end{exampleblock}
 \end{frame}
@@ -82,19 +89,23 @@
 
 \begin{frame}
     \frametitle{Dataset Description}
+    \footnotesize
     
     \begin{columns}[T]
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.48\textwidth}
             \textbf{Source:} Monkeypox Skin Lesion Dataset (Kaggle)
             \begin{itemize}
+                \footnotesize
+                \setlength{\itemsep}{2pt}
                 \item 228 skin lesion images (224$\times$224 RGB)
-                \item \textbf{Monkeypox (MPX):} 102 images
-                \item \textbf{Non-Monkeypox (ETC):} 126 images
-                \item Slightly imbalanced: $\sim$45\% MPX, 55\% ETC
+                \item \textbf{MPX:} 102 images (45\%)
+                \item \textbf{Non-MPX:} 126 images (55\%)
             \end{itemize}
-            \vspace{0.5em}
+            \vspace{0.3em}
             \textbf{Split:} Stratified 70/30
             \begin{itemize}
+                \footnotesize
+                \setlength{\itemsep}{2pt}
                 \item Training: 160 images
                 \item Testing: 68 images
             \end{itemize}
@@ -102,34 +113,36 @@
         
         \begin{column}{0.45\textwidth}
             \includegraphics[width=\textwidth]{sample_images.png}
-            \centerline{\small Dataset sample images}
+            \centerline{\footnotesize Dataset sample images}
         \end{column}
     \end{columns}
 \end{frame}
 
 \begin{frame}
     \frametitle{Lesion Segmentation Pipeline}
+    \footnotesize
     
     \begin{columns}[T]
-        \begin{column}{0.45\textwidth}
+        \begin{column}{0.42\textwidth}
             \textbf{Method:} LAB + CLAHE + Otsu + Morphology
-            \vspace{0.3em}
+            \vspace{0.2em}
             \begin{enumerate}
-                \small
-                \item Convert BGR $\rightarrow$ LAB color space
-                \item Apply CLAHE to $L^*$ and $a^*$ channels
-                \item Combine $L^*$ and inverted $a^*$ (weights 0.3, 0.7)
-                \item Otsu thresholding for binarization
-                \item Morphological closing + opening ($5\times5$ ellipse)
+                \footnotesize
+                \setlength{\itemsep}{1pt}
+                \item BGR $\rightarrow$ LAB conversion
+                \item CLAHE on $L^*$ and $a^*$ channels
+                \item Combine $L^*$ + inverted $a^*$ (0.3, 0.7)
+                \item Otsu thresholding
+                \item Morphological closing + opening
                 \item Keep largest connected component
             \end{enumerate}
-            \vspace{0.3em}
-            \alert{Result:} Clean binary mask isolating the primary lesion.
+            \vspace{0.2em}
+            \alert{Result:} Clean binary mask isolating the lesion.
         \end{column}
         
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.52\textwidth}
             \includegraphics[width=\textwidth]{segmentation_example.png}
-            \centerline{\small Segmentation results}
+            \centerline{\footnotesize Segmentation results}
         \end{column}
     \end{columns}
 \end{frame}
@@ -139,50 +152,57 @@
 
 \begin{frame}
     \frametitle{Handcrafted Feature Extraction}
+    \footnotesize
     
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \textbf{Seven categories, $\sim$200 raw features}
-            \vspace{0.3em}
+            \vspace{0.2em}
             \begin{itemize}
-                \small
-                \item \textbf{Color:} Moments + HSV histograms + percentiles in BGR/HSV/LAB (84)
-                \item \textbf{GLCM:} Contrast, dissimilarity, homogeneity, energy, correlation (10)
-                \item \textbf{LBP:} Uniform patterns, radius=2, P=16 (18)
-                \item \textbf{Gabor:} 3 orientations $\times$ 2 scales, mean+std (12)
-                \item \textbf{Shape:} Hu moments + geometric properties (12)
-                \item \textbf{Edge:} Canny density + Sobel gradient stats (3)
-                \item \textbf{FFT:} Radial power spectrum rings (16)
+                \footnotesize
+                \setlength{\itemsep}{1pt}
+                \item \textbf{Color} (84): Moments, HSV hist., percentiles in BGR/HSV/LAB
+                \item \textbf{GLCM} (10): Contrast, dissimilarity, homogeneity, energy, correlation
+                \item \textbf{LBP} (18): Uniform patterns, $r$=2, $P$=16
+                \item \textbf{Gabor} (12): 3 orientations $\times$ 2 scales
+                \item \textbf{Shape} (12): Hu moments + geometric properties
+                \item \textbf{Edge} (3): Canny density + Sobel gradient
+                \item \textbf{FFT} (16): Radial power spectrum rings
             \end{itemize}
-            \vspace{0.3em}
+            \vspace{0.2em}
             After variance filtering: \alert{155 features}
         \end{column}
         
         \begin{column}{0.48\textwidth}
             \textbf{Feature importance (by category)}
-            \vspace{0.3em}
-            \includegraphics[width=\textwidth]{category_importance.png}
-            \centerline{\small Cumulative Gini importance}
+            \vspace{0.2em}
+            \includegraphics[width=0.9\textwidth]{category_importance.png}
+            \centerline{\footnotesize Cumulative Gini importance}
         \end{column}
     \end{columns}
 \end{frame}
 
 \begin{frame}
     \frametitle{CNN Feature Extraction}
+    \footnotesize
     
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
             \textbf{Transfer Learning with ResNet18}
-            \vspace{0.3em}
+            \vspace{0.2em}
             \begin{itemize}
-                \item Pre-trained on ImageNet (1.2M images, 1000 classes)
+                \footnotesize
+                \setlength{\itemsep}{2pt}
+                \item Pre-trained on ImageNet (1.2M images)
                 \item Remove final FC layer
-                \item Extract 512-dim embedding from global average pooling
-                \item Inference mode (no gradient computation)
+                \item Extract 512-dim embedding
+                \item Inference mode (no gradients)
             \end{itemize}
-            \vspace{0.5em}
+            \vspace{0.3em}
             \textbf{Preprocessing}
             \begin{itemize}
+                \footnotesize
+                \setlength{\itemsep}{2pt}
                 \item Resize to 224$\times$224
                 \item ImageNet normalization
                 \item $\mu = [0.485, 0.456, 0.406]$
@@ -191,15 +211,18 @@
         \end{column}
         
         \begin{column}{0.45\textwidth}
-            \begin{tcolorbox}[colback=ugmLightGrey,colframe=ugmBlue,title=Feature Representations]
+            \begin{tcolorbox}[colback=ugmLightGrey,colframe=ugmBlue,title={\footnotesize Feature Representations}]
+                \footnotesize
                 \begin{enumerate}
-                    \small
-                    \item \textbf{Handcrafted only} (155 dims)
-                    \item \textbf{CNN only} (512 dims)
+                    \setlength{\itemsep}{1pt}
+                    \item \textbf{Handcrafted} (155 dims)
+                    \item \textbf{CNN} (512 dims)
                     \item \textbf{Hybrid (full)} (667 dims)
-                    \item \textbf{Hybrid (selected)} (200 dims via MI)
+                    \item \textbf{Hybrid (sel.)} (200 dims, MI)
                 \end{enumerate}
             \end{tcolorbox}
+            \vspace{0.2em}
+            \footnotesize
             All features Z-score normalized before classification.
         \end{column}
     \end{columns}
@@ -207,28 +230,36 @@
 
 \begin{frame}
     \frametitle{Classification Algorithms}
+    \footnotesize
     
-    \begin{table}
-        \centering
-        \small
-        \begin{tabular}{ll}
-            \toprule
-            \textbf{Classifier} & \textbf{Key Hyperparameters} \\
-            \midrule
-            SVM (RBF) & $C=10$, $\gamma=\text{scale}$ \\
-            Random Forest & 200 estimators, max depth=10 \\
-            XGBoost & 200 estimators, max depth=6, lr=0.1 \\
-            Logistic Regression & $C=1.0$, max iter=5000 \\
-            \bottomrule
-        \end{tabular}
-    \end{table}
-    
-    \vspace{0.3em}
-    \begin{itemize}
-        \item 5-fold stratified cross-validation on training set
-        \item Fixed hyperparameters across all feature sets for fair comparison
-        \item Independent test set evaluation
-    \end{itemize}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{table}
+                \centering
+                \footnotesize
+                \begin{tabular}{ll}
+                    \toprule
+                    \textbf{Classifier} & \textbf{Hyperparameters} \\
+                    \midrule
+                    SVM (RBF) & $C=10$, $\gamma=$scale \\
+                    Random Forest & 200 trees, depth=10 \\
+                    XGBoost & 200 trees, depth=6 \\
+                    Logistic Reg. & $C=1.0$, max iter=5000 \\
+                    \bottomrule
+                \end{tabular}
+            \end{table}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \begin{itemize}
+                \footnotesize
+                \setlength{\itemsep}{2pt}
+                \item 5-fold stratified CV on training set
+                \item Fixed hyperparameters across all sets
+                \item Independent test set evaluation
+            \end{itemize}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 % ----- SECTION: RESULTS -----
@@ -236,47 +267,64 @@
 
 \begin{frame}
     \frametitle{Classification Results}
+    \footnotesize
     
-    \begin{table}
-        \centering
-        \scriptsize
-        \begin{tabular}{@{}p{2.3cm}p{2.2cm}cccc@{}}
-            \toprule
-            \textbf{Feature Set} & \textbf{Classifier} & \textbf{Acc.} & \textbf{F1} & \textbf{Test AUC} & \textbf{CV AUC} \\
-            \midrule
-            CNN (ResNet18) & SVM (RBF) & \textbf{0.855} & \textbf{0.853} & \textbf{0.949} & 0.891 \\
-            Hybrid (full) & XGBoost & 0.841 & 0.838 & 0.890 & 0.798 \\
-            Hybrid (selected) & XGBoost & 0.855 & 0.848 & 0.907 & 0.833 \\
-            Hybrid (selected) & SVM (RBF) & 0.841 & 0.840 & 0.923 & 0.916 \\
-            CNN (ResNet18) & Random Forest & 0.812 & 0.806 & 0.911 & 0.821 \\
-            CNN (ResNet18) & Logistic Reg. & 0.826 & 0.823 & 0.887 & 0.847 \\
-            Hybrid (full) & SVM (RBF) & 0.826 & 0.825 & 0.928 & 0.915 \\
-            Handcrafted & XGBoost & 0.754 & 0.752 & 0.840 & 0.768 \\
-            Handcrafted & SVM (RBF) & 0.594 & 0.592 & 0.711 & 0.776 \\
-            \bottomrule
-        \end{tabular}
-    \end{table}
+    \begin{columns}[T]
+        \begin{column}{0.62\textwidth}
+            \begin{table}
+                \centering
+                \tiny
+                \begin{tabular}{@{}p{1.8cm}p{1.5cm}cccc@{}}
+                    \toprule
+                    \textbf{Feature Set} & \textbf{Classifier} & \textbf{Acc.} & \textbf{F1} & \textbf{Test AUC} & \textbf{CV AUC} \\
+                    \midrule
+                    CNN (ResNet18) & SVM (RBF) & \textbf{0.855} & \textbf{0.853} & \textbf{0.949} & 0.891 \\
+                    Hybrid (full) & SVM (RBF) & 0.826 & 0.825 & 0.928 & 0.915 \\
+                    Hybrid (sel.) & SVM (RBF) & 0.841 & 0.840 & 0.923 & 0.916 \\
+                    CNN (ResNet18) & Random Forest & 0.812 & 0.806 & 0.911 & 0.821 \\
+                    CNN (ResNet18) & Logistic Reg. & 0.826 & 0.823 & 0.887 & 0.847 \\
+                    Handcrafted & XGBoost & 0.754 & 0.752 & 0.840 & 0.768 \\
+                    \bottomrule
+                \end{tabular}
+            \end{table}
+        \end{column}
+        
+        \begin{column}{0.35\textwidth}
+            \textbf{Key Findings}
+            \begin{itemize}
+                \footnotesize
+                \setlength{\itemsep}{1pt}
+                \item CNN-only dominates all baselines
+                \item AUC = 0.949 (near-perfect)
+                \item Hybrid competitive but not superior
+                \item Handcrafted lags significantly
+            \end{itemize}
+        \end{column}
+    \end{columns}
     
-    \alert{Best result:} CNN-only + SVM (RBF) achieves \textbf{85.5\% accuracy} and \textbf{AUC = 0.949}
+    \vspace{0.3em}
+    \centerline{\alert{Best:} CNN-only + SVM (RBF) $\rightarrow$ \textbf{85.5\% accuracy, AUC = 0.949}}
 \end{frame}
 
 \begin{frame}
     \frametitle{ROC Curves}
+    \footnotesize
     
     \begin{columns}[T]
         \begin{column}{0.55\textwidth}
-            \includegraphics[width=\textwidth]{roc_curves.png}
-            \centerline{\small ROC curves for SVM (RBF)}
+            \includegraphics[width=0.9\textwidth]{roc_curves.png}
+            \centerline{\footnotesize ROC curves for SVM (RBF)}
         \end{column}
         
         \begin{column}{0.4\textwidth}
-            \vspace{1em}
             \textbf{Observations}
             \begin{itemize}
-                \item CNN-only dominates all other feature sets
-                \item AUC = 0.949 (near-perfect discrimination)
-                \item Hybrid approaches competitive but not superior
-                \item Handcrafted-only significantly lower performance
+                \footnotesize
+                \setlength{\itemsep}{2pt}
+                \item CNN-only dominates all sets
+                \item AUC = 0.949 (near-perfect)
+                \item Hybrid competitive but not superior
+                \item Handcrafted lags significantly
             \end{itemize}
         \end{column}
     \end{columns}
@@ -284,17 +332,18 @@
 
 \begin{frame}
     \frametitle{Confusion Matrix \& Classification Report}
+    \footnotesize
     
     \begin{columns}[T]
-        \begin{column}{0.35\textwidth}
+        \begin{column}{0.32\textwidth}
             \includegraphics[width=\textwidth]{confusion_matrix.png}
-            \centerline{\small Confusion matrix (best model)}
+            \centerline{\footnotesize Confusion matrix}
         \end{column}
         
-        \begin{column}{0.6\textwidth}
+        \begin{column}{0.63\textwidth}
             \textbf{Classification Report (SVM + CNN-only)}
-            \vspace{0.3em}
-            \small
+            \vspace{0.2em}
+            \footnotesize
             \begin{table}
                 \centering
                 \begin{tabular}{@{}lccc@{}}
@@ -308,12 +357,13 @@
                     \bottomrule
                 \end{tabular}
             \end{table}
-            \vspace{0.3em}
+            \vspace{0.2em}
             \begin{itemize}
-                \small
-                \item Correctly identifies 81\% of MPX cases
-                \item Correctly identifies 89\% of non-MPX cases
-                \item Balanced misclassifications
+                \footnotesize
+                \setlength{\itemsep}{1pt}
+                \item 81\% MPX recall, 89\% non-MPX recall
+                \item Balanced false positives / false negatives
+                \item Overall macro F1 = 0.85
             \end{itemize}
         \end{column}
     \end{columns}
@@ -321,42 +371,48 @@
 
 \begin{frame}
     \frametitle{Feature Space Visualization}
+    \footnotesize
     
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
-            \includegraphics[width=\textwidth]{tsne_hybrid.png}
-            \centerline{\small t-SNE (hybrid selected)}
+            \includegraphics[width=0.85\textwidth]{tsne_hybrid.png}
+            \centerline{\footnotesize t-SNE (hybrid selected)}
         \end{column}
         
         \begin{column}{0.48\textwidth}
-            \includegraphics[width=\textwidth]{pca_hybrid.png}
-            \centerline{\small PCA (hybrid selected)}
+            \includegraphics[width=0.85\textwidth]{pca_hybrid.png}
+            \centerline{\footnotesize PCA (hybrid selected)}
         \end{column}
     \end{columns}
     
-    \vspace{0.3em}
-    \centerline{\small Classes show moderate separability; some overlap remains consistent with challenging visual diagnosis}
+    \vspace{0.2em}
+    \centerline{\footnotesize Moderate separability; overlap consistent with challenging visual diagnosis}
 \end{frame}
 
 \begin{frame}
     \frametitle{Feature Importance Analysis}
+    \footnotesize
     
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
-            \includegraphics[width=\textwidth]{feature_importance.png}
-            \centerline{\small Top-25 handcrafted features (RF)}
+            \includegraphics[width=0.85\textwidth]{feature_importance.png}
+            \centerline{\footnotesize Top-25 handcrafted features (RF)}
         \end{column}
         
         \begin{column}{0.48\textwidth}
             \textbf{Key Findings}
             \begin{itemize}
-                \item \textbf{Color features} most important (HSV/LAB moments)
+                \footnotesize
+                \setlength{\itemsep}{1pt}
+                \item \textbf{Color features} most important (HSV/LAB)
                 \item \textbf{GLCM texture} second most discriminative
                 \item Gabor and edge features also contribute
-                \item Aligns with dermatological knowledge:
+                \item Aligns with dermatology:
                 \begin{itemize}
-                    \item MPX lesions have characteristic red-purple hues
-                    \item Specific surface textures (umbilicated vesicles)
+                    \footnotesize
+                    \setlength{\itemsep}{1pt}
+                    \item MPX: red-purple hues
+                    \item Umbilicated vesicle textures
                 \end{itemize}
             \end{itemize}
         \end{column}
@@ -368,39 +424,46 @@
 
 \begin{frame}
     \frametitle{Discussion}
+    \footnotesize
     
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
-            \begin{block}{CNN Features}
+            \begin{block}{\footnotesize CNN Features}
+                \footnotesize
                 \begin{itemize}
-                    \item ResNet18 embeddings highly effective even \textbf{without fine-tuning}
-                    \item Capture high-level patterns: shape, color, texture
-                    \item Best performance: AUC = 0.949
+                    \setlength{\itemsep}{1pt}
+                    \item ResNet18 highly effective \textbf{without fine-tuning}
+                    \item Captures shape, color, texture patterns
+                    \item Best: AUC = 0.949
                 \end{itemize}
             \end{block}
             
-            \begin{exampleblock}{Handcrafted Features}
+            \begin{exampleblock}{\footnotesize Handcrafted Features}
+                \footnotesize
                 \begin{itemize}
-                    \item Moderate performance (best AUC = 0.840)
-                    \item Color and GLCM most discriminative
+                    \setlength{\itemsep}{1pt}
+                    \item Moderate (best AUC = 0.840)
+                    \item Color and GLCM most important
                     \item Interpretable and lightweight
                 \end{itemize}
             \end{exampleblock}
         \end{column}
         
-        
         \begin{column}{0.48\textwidth}
-            \begin{alertblock}{Hybrid Approach}
+            \begin{alertblock}{\footnotesize Hybrid Approach}
+                \footnotesize
                 \begin{itemize}
+                    \setlength{\itemsep}{1pt}
                     \item Did \textbf{not} surpass CNN-only baseline
-                    \item Small dataset (228 images) causes overfitting with 667 dims
-                    \item Feature selection (200 dims) helps but still below CNN-only
-                    \item May outperform with larger dataset
+                    \item 228 samples: 667 dims overfits
+                    \item Selection (200 dims) helps but still below CNN
+                    \item May win with larger dataset
                 \end{itemize}
             \end{alertblock}
             
-            \begin{tcolorbox}[colback=ugmLightGrey,colframe=ugmBlue,title=Classifier Choice]
-                SVM (RBF) consistently best across all feature sets due to ability to model non-linear decision boundaries in high-dimensional spaces.
+            \begin{tcolorbox}[colback=ugmLightGrey,colframe=ugmBlue,title={\footnotesize Classifier Choice}]
+                \footnotesize
+                SVM (RBF) consistently best across all feature sets -- non-linear boundary in high-dim space.
             \end{tcolorbox}
         \end{column}
     \end{columns}
@@ -411,26 +474,31 @@
 
 \begin{frame}
     \frametitle{Conclusion \& Future Work}
+    \footnotesize
     
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
-            \textbf{Summary of Contributions}
+            \textbf{Summary}
             \begin{enumerate}
-                \item Robust LAB-based lesion segmentation pipeline
-                \item Comprehensive handcrafted feature extraction (7 categories)
-                \item Transfer-learned CNN embeddings from ResNet18
-                \item Systematic comparison: handcrafted vs. CNN vs. hybrid
-                \item Best result: \textbf{85.5\% accuracy, AUC = 0.949}
+                \footnotesize
+                \setlength{\itemsep}{1pt}
+                \item LAB-based lesion segmentation
+                \item 7-category handcrafted features (155 dims)
+                \item ResNet18 CNN embeddings (512 dims)
+                \item Systematic comparison across 4 classifiers
+                \item \textbf{Best: 85.5\% accuracy, AUC = 0.949}
             \end{enumerate}
         \end{column}
         
         \begin{column}{0.48\textwidth}
-            \textbf{Future Directions}
+            \textbf{Future Work}
             \begin{itemize}
-                \item Collect larger, multi-center dataset for fine-tuning
-                \item Integrate attention mechanisms for region highlighting
-                \item Deploy as lightweight mobile app for point-of-care use
-                \item Investigate ensemble methods combining multiple CNN architectures
+                \footnotesize
+                \setlength{\itemsep}{1pt}
+                \item Larger multi-center dataset
+                \item Attention mechanisms for highlighting
+                \item Lightweight mobile deployment
+                \item Multi-CNN ensemble methods
             \end{itemize}
         \end{column}
     \end{columns}
@@ -441,8 +509,9 @@
 
 \begin{frame}
     \frametitle{References}
-    \footnotesize
+    \scriptsize
     \begin{thebibliography}{9}
+        \setlength{\itemsep}{1pt}
         \bibitem{kaggle} N.~A.~Mahmud et al., ``Monkeypox Skin Lesion Dataset,'' Kaggle, 2022.
         \bibitem{codella} N.~Codella et al., ``Skin lesion analysis toward melanoma detection 2018,'' \textit{IEEE Trans. Med. Imag.}, 2018.
         \bibitem{haralick} R.~M.~Haralick et al., ``Textural features for image classification,'' \textit{IEEE Trans. SMC}, 1973.
