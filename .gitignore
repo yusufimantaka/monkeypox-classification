@@ -16,11 +16,14 @@ venv/
 *.swp
 
 # Data (ignore large image folders, keep metadata)
-data/images/
-data/TEST/
-data/TRAIN/
+data/ETC/
+data/MPX/
+data/features/
 # keep labels file
-!data/labels.csv
+!data/metadata.csv
+
+# Trained model artifacts (binary, regeneratable)
+model/
 
 # Logs and build artifacts
 *.log
