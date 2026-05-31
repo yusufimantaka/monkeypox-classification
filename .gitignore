@@ -35,3 +35,4 @@ node_modules/
 
 # Keep an example or README in repo
 !README.mdtectonic
+assets/SampleVideo_*.mp4
