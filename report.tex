@@ -10,7 +10,12 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{subfigure}
+\usepackage{array}
+\usepackage{adjustbox}
 \usepackage{hyperref}
+\usepackage{setspace}
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
@@ -21,12 +26,14 @@
 Handcrafted and Convolutional Neural Network Features}
 
 \author{
-    \IEEEauthorblockN{Anonymous Authors}
+    \IEEEauthorblockN{Yusuf Imantaka Bastari and
+    Aufa Sultan Syach Majid Putra Yuliyanto}
     \IEEEauthorblockA{
-        \textit{Department of Informatics} \\
-        \textit{Universitas [Name]} \\
-        City, Country \\
-        email@university.ac.id
+        \textit{Department of Computer Science and Electronics} \\
+        \textit{Universitas Gadjah Mada} \\
+        Yogyakarta, Indonesia \\
+        yusufimantakabastari@mail.ugm.ac.id,
+        johndoe@mail.ugm.ac.id
     }
 }
 
@@ -220,32 +227,28 @@ features, 155 handcrafted features remain. Table
 \caption{Handcrafted Feature Categories}
 \label{tab:handcrafted}
 \centering
-\begin{tabular}{@{}lll@{}}
+\small
+\begin{tabular}{@{}p{1.7cm}p{5.2cm}c@{}}
 \toprule
 \textbf{Category} & \textbf{Features} & \textbf{Count} \\
 \midrule
 Color & Moments (mean, std, CV) in BGR, HSV, LAB & 27 \\
       & HSV histograms (16 bins $\times$ 3 channels) & 48 \\
-      & HSV percentiles (5\textsuperscript{th}, 50\textsuperscript{th}, 95\textsuperscript{th}) & 9 \\
+      & HSV percentiles (5th, 50th, 95th) & 9 \\
 \midrule
-Texture (GLCM) & Contrast, dissimilarity, homogeneity, & 10 \\
-               & energy, correlation (mean + std over & \\
-               & 4 angles, 2 distances) & \\
+Texture (GLCM) & Contrast, dissimilarity, homogeneity, energy, correlation (mean, std over 4 angles, 2 distances) & 10 \\
 \midrule
 Texture (LBP)  & Uniform LBP histogram (radius=2, P=16) & 18 \\
 \midrule
-Texture (Gabor)& Mean and std of Gabor magnitude at & 12 \\
-               & 3 orientations $\times$ 2 scales & \\
+Texture (Gabor)& Mean and std of Gabor magnitude (3 orientations $\times$ 2 scales) & 12 \\
 \midrule
 Shape & Hu moments (7 invariants) & 7 \\
-      & Circularity, aspect ratio, extent, solidity, & 5 \\
-      & eccentricity, major/minor axis lengths & \\
+      & Circularity, aspect ratio, extent, solidity, eccentricity, major/minor axis lengths & 5 \\
 \midrule
 Edge & Canny edge density & 1 \\
      & Gradient mean and std (Sobel) & 2 \\
 \midrule
-Frequency & FFT radial power spectrum mean and std & 16 \\
-          & (8 ring bands) & \\
+Frequency & FFT radial power spectrum mean and std (8 ring bands) & 16 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -390,10 +393,11 @@ CNN-only features, attaining a test accuracy of 85.5\% and an AUC of
 (sorted by Test AUC, descending)}
 \label{tab:results}
 \centering
-\begin{tabular}{@{}llcccc@{}}
+\small
+\begin{tabular}{@{}p{2.6cm}p{2.4cm}cccc@{}}
 \toprule
-\textbf{Feature Set} & \textbf{Classifier} & \textbf{Test Acc} &
-\textbf{Test F1 (macro)} & \textbf{Test AUC} & \textbf{CV AUC} \\
+\textbf{Feature Set} & \textbf{Classifier} & \textbf{Acc.} &
+\textbf{F1 (macro)} & \textbf{Test AUC} & \textbf{CV AUC} \\
 \midrule
 CNN (ResNet18) & SVM (RBF) & \textbf{0.855} & \textbf{0.853} &
 \textbf{0.949} & 0.891 \\
@@ -401,13 +405,13 @@ Hybrid (full) & XGBoost & 0.841 & 0.838 & 0.890 & 0.798 \\
 Hybrid (selected) & XGBoost & 0.855 & 0.848 & 0.907 & 0.833 \\
 Hybrid (selected) & SVM (RBF) & 0.841 & 0.840 & 0.923 & 0.916 \\
 CNN (ResNet18) & Random Forest & 0.812 & 0.806 & 0.911 & 0.821 \\
-CNN (ResNet18) & Logistic Regression & 0.826 & 0.823 & 0.887 & 0.847 \\
+CNN (ResNet18) & Logistic Reg. & 0.826 & 0.823 & 0.887 & 0.847 \\
 Hybrid (full) & SVM (RBF) & 0.826 & 0.825 & 0.928 & 0.915 \\
-Hybrid (full) & Logistic Regression & 0.812 & 0.808 & 0.885 & 0.896 \\
+Hybrid (full) & Logistic Reg. & 0.812 & 0.808 & 0.885 & 0.896 \\
 Handcrafted & XGBoost & 0.754 & 0.752 & 0.840 & 0.768 \\
 CNN (ResNet18) & XGBoost & 0.797 & 0.794 & 0.869 & 0.805 \\
 Handcrafted & Random Forest & 0.739 & 0.735 & 0.784 & 0.794 \\
-Handcrafted & Logistic Regression & 0.667 & 0.666 & 0.778 & 0.763 \\
+Handcrafted & Logistic Reg. & 0.667 & 0.666 & 0.778 & 0.763 \\
 Handcrafted & SVM (RBF) & 0.594 & 0.592 & 0.711 & 0.776 \\
 \bottomrule
 \end{tabular}
@@ -557,9 +561,9 @@ diagnostic assistance in endemic regions.
 \section*{Acknowledgment}
 
 This work was conducted as part of the Pattern Recognition course
-at [University Name]. The authors thank the creators of the
-publicly available Monkeypox image dataset for enabling this
-research.
+at Universitas Gadjah Mada. The authors thank the creators of the
+publicly available Monkeypox Skin Lesion Dataset on Kaggle for
+enabling this research.
 
 \begin{thebibliography}{00}
 
